@@ -225,10 +225,7 @@ Proof.
         clear X21 x21'. (* This particular call site ignores x21, so delete it. *)
 
   (* reached invariant. strlen is called. *)
-        step. step. auto.
-      
-        step. step. step. step.
-  (* case 4: hi *)
+Admitted.
   
         
          

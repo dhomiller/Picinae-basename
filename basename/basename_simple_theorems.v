@@ -12,31 +12,18 @@ Proof.
 	reflexivity.
 Qed.
 
-(* Define binary length-bounded string equality. *)
-(*Definition memeq (m1 m2:memory) (p1 p2: addr) (k: N) :=
-  forall i, i < k -> tolower (m Ⓑ[p1+i]) = tolower (m Ⓑ[p2+i]) /\ 0 < m Ⓑ[p1+i].*)
-
 Section Invariants.
 
   Variable sp : N          (* initial stack pointer *).
   Variable mem : memory    (* initial memory state *).
   Variable raddr : N       (* return address (R_X30) *).
-  Variable arg1 : N        (* strcasecmp: 1st pointer arg (R_X0)
-                              tolower: input character (R_X0) *).
-  Variable x19 x20 x21 : N     (* tolower: R_X20, R_X21 (callee-save regs) *).
+  Variable arg1 : N        (* first argument *).
 
   Definition mem' fbytes := setmem 64 LittleE 40 mem (sp ⊖ 48) fbytes.
   Definition mem'' k p sbytes fbytes := setmem 64 LittleE k (mem' fbytes) p sbytes.
 
-  (* The post-condition says that interpreting x0 as a signed integer z
-     whose sign equals the comparison of the kth byte in the two input
-     strings, where the two strings are identical before k, and z may only be
-     zero if the kth bytes are both nil. *)
   Definition postcondition (s:store) :=
-    (*exists k (*fb*),*)
-      (*s V_MEM64 = mem'' k p sb fb /\*)
       (arg1 <> 0 -> 
-      (*(arg1 < (sp ⊖ 48) /\ arg1+k < (sp ⊖ 48)) \/ (arg1 > (sp) /\ arg1+k > (sp)) ->*)
       (s R_X0 = arg1 \/ (s V_MEM64)Ⓑ[(s R_X0)⊖1]=47)).
 
   (* Invariant sets f for multi-subroutine properties have the following signature:
